@@ -1,0 +1,59 @@
+{
+  "_comment": "Example claude_code_config.json (Claude Code user settings) wiring ethos-gate hooks.",
+
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /path/to/ethos_gate/hooks/irreversible_guard.py",
+            "timeout": 5000
+          },
+          {
+            "type": "command",
+            "command": "python3 /path/to/ethos_gate/hooks/external_action_gate.py",
+            "timeout": 10000
+          }
+        ]
+      },
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /path/to/ethos_gate/hooks/credential_scrape_hook.py",
+            "timeout": 3000
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /path/to/ethos_gate/hooks/irreversible_guard.py",
+            "timeout": 5000
+          }
+        ]
+      }
+    ]
+  },
+
+  "env": {
+    "HARNESS_VERIFY": "1",
+    "ETHOS_OWNED_ORGS": "your-org,your-other-org",
+    "ETHOS_PROD_PATH_PATTERN": "src/app/",
+    "ETHOS_DONE_GATE_PATTERN": "done-gate\\.sh"
+  },
+
+  "_notes": [
+    "Replace /path/to/ethos_gate with the actual install path (e.g. site-packages or a local checkout).",
+    "HARNESS_VERIFY=1 arms the verify-before-done gate; omit it in interactive sessions where you do not want the gate.",
+    "ETHOS_OWNED_ORGS is a comma-separated list of GitHub org/user slugs you own — actions against these bypass the external-action judge.",
+    "ETHOS_PROD_PATH_PATTERN is an optional regex; if set, touching matching paths arms the done-gate check on Stop.",
+    "Hook timeouts are in milliseconds. A hook that times out FAILS OPEN (exit 0 = allow) by design."
+  ]
+}
