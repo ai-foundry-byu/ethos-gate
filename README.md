@@ -23,7 +23,7 @@ Built from production patterns running 10+ concurrent autonomous Claude sessions
 ```bash
 pip install ethos-gate
 # or from source:
-git clone https://github.com/jddavenportopen/ethos-gate
+git clone https://github.com/ai-foundry-byu/ethos-gate
 cd ethos-gate && pip install -e .
 ```
 
